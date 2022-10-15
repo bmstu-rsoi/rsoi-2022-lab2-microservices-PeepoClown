@@ -132,7 +132,7 @@ DELETE {{baseUrl}}/api/v1/rental/{{rentalUid}}
 X-User-Name: {{username}}
 ```
 
-Описание в формате [OpenAPI](%5Binst%5D%5Bv3%5D%20Car%20Rental%20System.yml).
+Описание в формате [OpenAPI](../../openapi/%5Binst%5D%5Bv3%5D%20Car%20Rental%20System.yml).
 
 ### Данные для тестов
 
