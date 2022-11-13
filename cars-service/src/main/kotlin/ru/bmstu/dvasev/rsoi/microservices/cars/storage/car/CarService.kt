@@ -33,7 +33,7 @@ class CarService(
 
     private fun toCarModel(car: Car) =
         CarModel(
-            carUid = car.carUid!!,
+            carUid = car.carUid.toString(),
             brand = car.brand!!,
             model = car.model!!,
             registrationNumber = car.registrationNumber!!,
