@@ -1,7 +1,7 @@
-package ru.bmstu.dvasev.rsoi.microservices.rental.configuration
+package ru.bmstu.dvasev.rsoi.microservices.payment.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -18,6 +18,6 @@ class ObjectMapperConfiguration {
             .registerModule(KotlinModule())
             .registerModule(customDeserializationModule)
             .registerModule(JavaTimeModule())
-            .configure(WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     }
 }
