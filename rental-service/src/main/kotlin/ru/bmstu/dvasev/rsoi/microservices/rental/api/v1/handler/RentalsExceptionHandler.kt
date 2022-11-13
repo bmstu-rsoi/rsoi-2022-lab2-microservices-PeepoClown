@@ -15,7 +15,7 @@ import ru.bmstu.dvasev.rsoi.microservices.common.model.ValidationErrorDescriptio
 import ru.bmstu.dvasev.rsoi.microservices.common.model.ValidationErrorResponse
 
 @RestControllerAdvice
-class RentalExceptionHandler {
+class RentalsExceptionHandler {
 
     private val log = KotlinLogging.logger {}
 

@@ -32,7 +32,7 @@ class CarService(
         return PageableCarsModel(
             cars = carsList,
             page = if (pageRequest.isPaged) pageRequest.pageNumber + 1 else 1,
-            pageSize = if (pageRequest.isPaged) pageRequest.pageSize else carsList.size
+            pageSize = carsList.size
         )
     }
 

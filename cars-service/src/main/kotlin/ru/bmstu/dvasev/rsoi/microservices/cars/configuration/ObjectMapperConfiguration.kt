@@ -1,4 +1,4 @@
-package ru.bmstu.dvasev.rsoi.microservices.rental.configuration
+package ru.bmstu.dvasev.rsoi.microservices.cars.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
