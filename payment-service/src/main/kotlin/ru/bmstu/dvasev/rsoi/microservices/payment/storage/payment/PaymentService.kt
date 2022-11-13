@@ -27,7 +27,8 @@ class PaymentService(
     }
 
     fun cancelPayment(paymentUid: String): Optional<PaymentModel> {
-        return paymentRepository.findByPaymentUid(fromString(paymentUid))
+        return paymentRepository
+            .findByPaymentUid(fromString(paymentUid))
             .map { updatePaymentStatusByUid(it, CANCELED) }
             .map { toPaymentModel(it) }
     }

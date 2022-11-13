@@ -8,6 +8,7 @@ import ru.bmstu.dvasev.rsoi.microservices.cars.model.CarModel
 import ru.bmstu.dvasev.rsoi.microservices.cars.model.GetCarsRq
 import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.dao.CarRepository
 import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.entity.Car
+import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.model.PageableCarsModel
 import java.util.Objects.nonNull
 
 @Service
@@ -15,7 +16,7 @@ class CarService(
     private val carRepository: CarRepository
 ) {
 
-    fun getCarsPageable(getCarsRq: GetCarsRq): List<CarModel> {
+    fun getCarsPageable(getCarsRq: GetCarsRq): PageableCarsModel {
         var pageRequest: Pageable = unpaged()
         if (nonNull(getCarsRq.page) && nonNull(getCarsRq.size)) {
             pageRequest = PageRequest.of(getCarsRq.page!!, getCarsRq.size!!)
@@ -27,8 +28,12 @@ class CarService(
             else carRepository.findByAvailabilityTrue(pageRequest)
         } else carRepository.findByAvailabilityTrue(pageRequest)
 
-        return cars
-            .map(this::toCarModel)
+        val carsList = cars.map(this::toCarModel)
+        return PageableCarsModel(
+            cars = carsList,
+            page = if (pageRequest.isPaged) pageRequest.pageNumber + 1 else 1,
+            pageSize = if (pageRequest.isPaged) pageRequest.pageSize else carsList.size
+        )
     }
 
     private fun toCarModel(car: Car) =

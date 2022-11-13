@@ -15,4 +15,7 @@ include("cars-service")
 include("payment-api")
 include("payment-service")
 
+include("rental-api")
+include("rental-service")
+
 include("gateway-service")

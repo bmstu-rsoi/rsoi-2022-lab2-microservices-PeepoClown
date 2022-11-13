@@ -28,14 +28,14 @@ class CarsController(
     @PostMapping("get/pageable")
     fun getCarsPagination(@Valid @RequestBody request: GetCarsRq): ApiResponse<GetCarsRs> {
         log.debug { "Received new get cars pageable request. $request" }
-        val cars = carService.getCarsPageable(request)
+        val carsPageable = carService.getCarsPageable(request)
         val response = ApiResponse(
             httpCode = OK,
             response = GetCarsRs(
-                page = request.page,
-                pageSize = request.size,
-                totalElements = cars.size,
-                items = cars
+                page = carsPageable.page,
+                pageSize = carsPageable.pageSize,
+                totalElements = carsPageable.cars.size,
+                items = carsPageable.cars
             )
         )
         log.debug { "Return a get cars pageable response. $response" }
