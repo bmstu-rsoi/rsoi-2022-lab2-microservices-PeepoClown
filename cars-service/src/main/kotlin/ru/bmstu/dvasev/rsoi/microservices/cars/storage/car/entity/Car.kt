@@ -1,6 +1,7 @@
 package ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.entity
 
 import ru.bmstu.dvasev.rsoi.microservices.cars.model.CarType
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType.STRING
@@ -20,7 +21,7 @@ data class Car(
     val id: Long? = null,
 
     @Column(name = "car_uid", nullable = false, unique = true)
-    val carUid: String? = null,
+    val carUid: UUID? = null,
 
     @Column(name = "brand", nullable = false)
     val brand: String? = null,
