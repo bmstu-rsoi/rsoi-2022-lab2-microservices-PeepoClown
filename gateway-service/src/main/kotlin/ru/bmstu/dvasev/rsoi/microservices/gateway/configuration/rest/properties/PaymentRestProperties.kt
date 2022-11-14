@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull
 
 @Validated
 @ConstructorBinding
-@ConfigurationProperties("cars.rest")
-data class CarsRestProperties(
+@ConfigurationProperties("payment.rest")
+data class PaymentRestProperties(
     @get:NotBlank
     override val baseUrl: String,
     @get:NotNull
@@ -24,10 +24,6 @@ data class CarsRestProperties(
     @get:Max(50)
     @get:NotNull
     override val maxThreads: Int = 10,
-    @get:NotBlank
-    val getCarsPath: String = "/get/pageable",
-    @get:NotBlank
-    val findCarPath: String = "/find",
-    @get:NotBlank
-    val reservePath: String = "/reserve"
+    @get:NotNull
+    val createPaymentPath: String = ""
 ): CommonRestTemplateProperties

@@ -19,7 +19,10 @@ configurations {
 
 dependencies {
     implementation(project(":common-api"))
+    implementation(project(":gateway-api"))
     implementation(project(":cars-api"))
+    implementation(project(":payment-api"))
+    implementation(project(":rental-api"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
