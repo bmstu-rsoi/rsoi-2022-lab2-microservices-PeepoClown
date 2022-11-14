@@ -33,6 +33,12 @@ class PaymentService(
             .map { toPaymentModel(it) }
     }
 
+    fun findPaymentByUid(paymentUid: String): Optional<PaymentModel> {
+        return paymentRepository
+            .findByPaymentUid(fromString(paymentUid))
+            .map { toPaymentModel(it) }
+    }
+
     private fun updatePaymentStatusByUid(payment: Payment, status: PaymentStatus): Payment {
         val updatedPayment = Payment(
             id = payment.id,

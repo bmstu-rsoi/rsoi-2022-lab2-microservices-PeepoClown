@@ -24,5 +24,9 @@ data class RentalRestProperties(
     @get:NotNull
     override val maxThreads: Int = 10,
     @get:NotNull
-    val createRentalPath: String = ""
+    val createRentalPath: String = "",
+    @get:NotNull
+    val getUserRent: String = "/user/find",
+    @get:NotNull
+    val getUserRents: String = "/user/get",
 ) : CommonRestTemplateProperties

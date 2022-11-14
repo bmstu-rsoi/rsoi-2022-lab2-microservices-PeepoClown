@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import ru.bmstu.dvasev.rsoi.microservices.cars.model.GetCarsRq
 import ru.bmstu.dvasev.rsoi.microservices.gateway.action.CarsGetAction
 import ru.bmstu.dvasev.rsoi.microservices.gateway.action.RentCarAction
+import ru.bmstu.dvasev.rsoi.microservices.gateway.action.UserRentGetAction
 import ru.bmstu.dvasev.rsoi.microservices.gateway.model.CreateRentalRequest
 import ru.bmstu.dvasev.rsoi.microservices.gateway.model.CreateRentalRequestWithUser
 import javax.validation.Valid
@@ -23,7 +25,8 @@ import javax.validation.Valid
 )
 class ApiV1Controller(
     private val carsGetAction: CarsGetAction,
-    private val rentCarAction: RentCarAction
+    private val rentCarAction: RentCarAction,
+    private val userRentGetAction: UserRentGetAction
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -66,6 +69,33 @@ class ApiV1Controller(
         log.debug { "Received new create car rent request. $requestWithUser" }
         val response = rentCarAction.process(requestWithUser)
         log.debug { "Return rent car response. $response" }
+        return response
+    }
+
+    @GetMapping(
+        path = ["rental/{rentalUid}"],
+        produces = [APPLICATION_JSON_VALUE]
+    )
+    fun getRentByUser(
+        @RequestHeader("X-User-Name") username: String,
+        @PathVariable("rentalUid") rentalUid: String
+    ): ResponseEntity<*> {
+        log.debug { "Received new get user $username rent request. $rentalUid" }
+        val response = userRentGetAction.getUserRent(username, rentalUid)
+        log.debug { "Return get user $username rent response. $response" }
+        return response
+    }
+
+    @GetMapping(
+        path = ["rental"],
+        produces = [APPLICATION_JSON_VALUE]
+    )
+    fun getRentsByUser(
+        @RequestHeader("X-User-Name") username: String
+    ): ResponseEntity<*> {
+        log.debug { "Received new get user $username rents request" }
+        val response = userRentGetAction.getUserRents(username)
+        log.debug { "Return get user $username rents response. $response" }
         return response
     }
 }

@@ -14,6 +14,7 @@ import ru.bmstu.dvasev.rsoi.microservices.common.model.ApiResponse
 import ru.bmstu.dvasev.rsoi.microservices.common.model.ErrorResponse
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.CancelPaymentRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.CreatePaymentRq
+import ru.bmstu.dvasev.rsoi.microservices.payment.model.GetPaymentByUidRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.PaymentModel
 import ru.bmstu.dvasev.rsoi.microservices.payment.storage.payment.PaymentService
 import javax.validation.Valid
@@ -39,6 +40,25 @@ class PaymentsController(
             response = payment
         )
         log.debug { "Successfully create payment. Response: $response" }
+        return response
+    }
+
+    @PostMapping("find")
+    fun findPayment(@Valid @RequestBody request: GetPaymentByUidRq): ApiResponse<PaymentModel> {
+        log.debug { "Received new find payment by uid request. $request" }
+        val payment = paymentService.findPaymentByUid(request.paymentUid)
+        if (payment.isEmpty) {
+            log.warn { "Failed to find payment by uid ${request.paymentUid}" }
+            return ApiResponse(
+                httpCode = NOT_FOUND,
+                error = ErrorResponse("Failed to find payment by uid ${request.paymentUid}")
+            )
+        }
+        val response = ApiResponse(
+            httpCode = OK,
+            response = payment.get()
+        )
+        log.debug { "Successfully found payment by uid ${request.paymentUid}. $response" }
         return response
     }
 

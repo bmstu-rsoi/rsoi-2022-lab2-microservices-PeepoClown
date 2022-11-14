@@ -25,5 +25,7 @@ data class PaymentRestProperties(
     @get:NotNull
     override val maxThreads: Int = 10,
     @get:NotNull
-    val createPaymentPath: String = ""
+    val createPaymentPath: String = "",
+    @get:NotNull
+    val findPaymentPath: String = "/find"
 ): CommonRestTemplateProperties
