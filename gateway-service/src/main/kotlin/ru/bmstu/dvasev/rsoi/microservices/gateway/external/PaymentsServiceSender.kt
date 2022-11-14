@@ -11,10 +11,12 @@ import ru.bmstu.dvasev.rsoi.microservices.common.model.ApiResponse
 import ru.bmstu.dvasev.rsoi.microservices.common.model.ErrorResponse
 import ru.bmstu.dvasev.rsoi.microservices.gateway.configuration.rest.properties.PaymentRestProperties
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.CreatePaymentRq
+import ru.bmstu.dvasev.rsoi.microservices.payment.model.GetPaymentByUidRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.PaymentModel
 import java.nio.charset.StandardCharsets
 
 class WrappedCreatePaymentRs(httpCode: HttpStatus) : ApiResponse<PaymentModel>(httpCode)
+class WrappedFindPaymentByUid(httpCode: HttpStatus) : ApiResponse<PaymentModel>(httpCode)
 
 @Service
 class PaymentsServiceSender(
@@ -42,6 +44,30 @@ class PaymentsServiceSender(
             ApiResponse(
                 httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
                 error = ErrorResponse("Failed to send create payment request. ${ex.message}")
+            )
+        }
+    }
+
+    fun findPaymentByUid(paymentUid: String): ApiResponse<PaymentModel> {
+        val findPaymentByUidRq = GetPaymentByUidRq(
+            paymentUid = paymentUid
+        )
+        val request = HttpEntity(findPaymentByUidRq, buildHeaders())
+        log.debug { "Sending find payment by uid request" }
+
+        return try {
+            val response = paymentsRestTemplate.postForObject(
+                paymentRestProperties.findPaymentPath,
+                request,
+                WrappedFindPaymentByUid::class.java
+            )
+            log.info { "Successfully received response from get payment by uid service. $response" }
+            response!!
+        } catch (ex: Exception) {
+            log.warn(ex) { "Failed to send get payment by uid request. ${ex.message}" }
+            ApiResponse(
+                httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
+                error = ErrorResponse("Failed to send get payment by uid request. ${ex.message}")
             )
         }
     }

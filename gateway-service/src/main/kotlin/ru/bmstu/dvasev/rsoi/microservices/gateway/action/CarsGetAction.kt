@@ -22,7 +22,7 @@ class CarsGetAction(
             log.error { "Failed to get available cars. ${errorMessage.toString()}" }
             return ResponseEntity(
                 errorMessage,
-                carsResponse.httpCode!!
+                carsResponse.httpCode
             )
         }
         val response = ResponseEntity(
