@@ -67,7 +67,7 @@ class RentEndAction(
         carsServiceSender.unreserveCar(car.carUid)
         val rentalStatusChangeRq = RentalStatusChangeRq(
             rentalUid = rentalUid,
-            status = RentStatus.CANCELED
+            status = RentStatus.FINISHED
         )
         rentalServiceSender.changeRentalStatus(rentalStatusChangeRq)
         return ResponseEntity(null, NO_CONTENT)
