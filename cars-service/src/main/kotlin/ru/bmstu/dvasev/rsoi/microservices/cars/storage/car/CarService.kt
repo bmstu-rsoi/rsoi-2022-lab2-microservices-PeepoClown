@@ -9,7 +9,11 @@ import ru.bmstu.dvasev.rsoi.microservices.cars.model.GetCarsRq
 import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.dao.CarRepository
 import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.entity.Car
 import ru.bmstu.dvasev.rsoi.microservices.cars.storage.car.model.PageableCarsModel
+import java.util.Optional
 import java.util.Objects.nonNull
+import java.util.Optional.empty
+import java.util.Optional.of
+import java.util.UUID.fromString
 
 @Service
 class CarService(
@@ -34,6 +38,32 @@ class CarService(
             page = if (pageRequest.isPaged) pageRequest.pageNumber + 1 else 1,
             pageSize = carsList.size
         )
+    }
+
+    fun findCarByUid(carUid: String): Optional<CarModel> {
+        return carRepository
+            .findByCarUid(fromString(carUid))
+            .map { toCarModel(it) }
+    }
+
+    fun reserve(carUid: String): Optional<CarModel> {
+        val foundCar = carRepository.findByCarUid(fromString(carUid))
+        if (foundCar.isEmpty) {
+            return empty();
+        }
+        val car = Car(
+            id = foundCar.get().id,
+            carUid = foundCar.get().carUid,
+            brand = foundCar.get().brand,
+            model = foundCar.get().model,
+            registrationNumber = foundCar.get().registrationNumber,
+            power = foundCar.get().power,
+            price = foundCar.get().price,
+            type = foundCar.get().type,
+            availability = false
+        )
+        return of(carRepository.save(car))
+            .map { toCarModel(it) }
     }
 
     private fun toCarModel(car: Car) =
