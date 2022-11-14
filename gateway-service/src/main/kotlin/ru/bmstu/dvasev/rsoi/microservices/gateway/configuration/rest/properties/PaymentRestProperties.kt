@@ -27,5 +27,7 @@ data class PaymentRestProperties(
     @get:NotNull
     val createPaymentPath: String = "",
     @get:NotNull
-    val findPaymentPath: String = "/find"
+    val findPaymentPath: String = "/find",
+    @get:NotNull
+    val cancelPayment: String = "/cancel"
 ): CommonRestTemplateProperties

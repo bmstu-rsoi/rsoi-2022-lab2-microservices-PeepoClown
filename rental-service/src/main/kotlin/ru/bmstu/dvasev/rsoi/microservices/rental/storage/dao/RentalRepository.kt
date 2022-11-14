@@ -11,6 +11,9 @@ import java.util.UUID
 @Repository
 interface RentalRepository : JpaRepository<Rental, Long> {
 
+    @Query("select r from rental r where r.rentalUid = :rentalUid")
+    fun findByRentalUid(@Param("rentalUid") rentalUid: UUID): Optional<Rental>
+
     @Query("select r from rental r where r.username = :username")
     fun findAllByUsername(@Param("username") username: String): List<Rental>
 

@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate
 import ru.bmstu.dvasev.rsoi.microservices.common.model.ApiResponse
 import ru.bmstu.dvasev.rsoi.microservices.common.model.ErrorResponse
 import ru.bmstu.dvasev.rsoi.microservices.gateway.configuration.rest.properties.PaymentRestProperties
+import ru.bmstu.dvasev.rsoi.microservices.payment.model.CancelPaymentRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.CreatePaymentRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.GetPaymentByUidRq
 import ru.bmstu.dvasev.rsoi.microservices.payment.model.PaymentModel
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets
 
 class WrappedCreatePaymentRs(httpCode: HttpStatus) : ApiResponse<PaymentModel>(httpCode)
 class WrappedFindPaymentByUid(httpCode: HttpStatus) : ApiResponse<PaymentModel>(httpCode)
+class WrappedCancelPaymentByUid(httpCode: HttpStatus) : ApiResponse<PaymentModel>(httpCode)
 
 @Service
 class PaymentsServiceSender(
@@ -68,6 +70,28 @@ class PaymentsServiceSender(
             ApiResponse(
                 httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
                 error = ErrorResponse("Failed to send get payment by uid request. ${ex.message}")
+            )
+        }
+    }
+
+    fun cancelPayment(paymentUid: String): ApiResponse<PaymentModel> {
+        val cancelPaymentRq = CancelPaymentRq(paymentUid)
+        val request = HttpEntity(cancelPaymentRq, buildHeaders())
+        log.debug { "Sending cancel payment by uid request" }
+
+        return try {
+            val response = paymentsRestTemplate.patchForObject(
+                paymentRestProperties.cancelPayment,
+                request,
+                WrappedCancelPaymentByUid::class.java
+            )
+            log.info { "Successfully received response from cancel payment by uid service. $response" }
+            response!!
+        } catch (ex: Exception) {
+            log.warn(ex) { "Failed to send get cancel by uid request. ${ex.message}" }
+            ApiResponse(
+                httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
+                error = ErrorResponse("Failed to send get cancel by uid request. ${ex.message}")
             )
         }
     }

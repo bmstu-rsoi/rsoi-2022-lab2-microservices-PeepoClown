@@ -85,4 +85,23 @@ class CarsController(
         log.debug { "Successfully reserve car with uid $carUid. Response: $response" }
         return response
     }
+
+    @PatchMapping("unreserve/{carUid}")
+    fun unreserveCar(@PathVariable("carUid") carUid: String): ApiResponse<CarModel> {
+        log.debug { "Received new unreserve card with uid $carUid request" }
+        val car = carService.unreserve(carUid)
+        if (car.isEmpty) {
+            log.warn { "Failed to unreserve car with uid $carUid" }
+            return ApiResponse(
+                httpCode = NOT_FOUND,
+                error = ErrorResponse("Failed to unreserve car with uid $carUid")
+            )
+        }
+        val response = ApiResponse(
+            httpCode = OK,
+            response = car.get()
+        )
+        log.debug { "Successfully unreserve car with uid $carUid. Response: $response" }
+        return response
+    }
 }

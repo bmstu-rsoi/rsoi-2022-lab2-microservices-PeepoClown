@@ -66,6 +66,26 @@ class CarService(
             .map { toCarModel(it) }
     }
 
+    fun unreserve(carUid: String): Optional<CarModel> {
+        val foundCar = carRepository.findByCarUid(fromString(carUid))
+        if (foundCar.isEmpty) {
+            return empty();
+        }
+        val car = Car(
+            id = foundCar.get().id,
+            carUid = foundCar.get().carUid,
+            brand = foundCar.get().brand,
+            model = foundCar.get().model,
+            registrationNumber = foundCar.get().registrationNumber,
+            power = foundCar.get().power,
+            price = foundCar.get().price,
+            type = foundCar.get().type,
+            availability = true
+        )
+        return of(carRepository.save(car))
+            .map { toCarModel(it) }
+    }
+
     private fun toCarModel(car: Car) =
         CarModel(
             carUid = car.carUid.toString(),

@@ -29,5 +29,7 @@ data class CarsRestProperties(
     @get:NotBlank
     val findCarPath: String = "/find",
     @get:NotBlank
-    val reservePath: String = "/reserve"
+    val reservePath: String = "/reserve",
+    @get:NotBlank
+    val unreservePath: String = "/unreserve"
 ): CommonRestTemplateProperties
