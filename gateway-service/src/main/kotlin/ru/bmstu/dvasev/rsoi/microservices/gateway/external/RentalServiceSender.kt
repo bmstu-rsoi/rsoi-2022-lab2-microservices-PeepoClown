@@ -15,10 +15,12 @@ import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentRq
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentsRq
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentsRs
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.RentalModel
+import ru.bmstu.dvasev.rsoi.microservices.rental.model.RentalStatusChangeRq
 import java.nio.charset.StandardCharsets
 
 class WrappedCreateRentRs(httpCode: HttpStatus) : ApiResponse<RentalModel>(httpCode)
 class WrappedGetUserRentRs(httpCode: HttpStatus) : ApiResponse<RentalModel>(httpCode)
+class WrappedChangeStatusRentRs(httpCode: HttpStatus) : ApiResponse<RentalModel>(httpCode)
 class WrappedGetUserRentsRs(httpCode: HttpStatus) : ApiResponse<GetUserRentsRs>(httpCode)
 
 @Service
@@ -88,6 +90,27 @@ class RentalServiceSender(
             ApiResponse(
                 httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
                 error = ErrorResponse("Failed to send get user rents request. ${ex.message}")
+            )
+        }
+    }
+
+    fun changeRentalStatus(rentalStatusChangeRq: RentalStatusChangeRq): ApiResponse<RentalModel> {
+        val request = HttpEntity(rentalStatusChangeRq, buildHeaders())
+        log.debug { "Sending change rent status request. $request" }
+
+        return try {
+            val response = rentalRestTemplate.patchForObject(
+                rentalRestProperties.changeRentStatusPath,
+                request,
+                WrappedChangeStatusRentRs::class.java
+            )
+            log.info { "Successfully received response from change rent status service. $response" }
+            response!!
+        } catch (ex: Exception) {
+            log.warn(ex) { "Failed to send change rent status request. ${ex.message}" }
+            ApiResponse(
+                httpCode = HttpStatus.INTERNAL_SERVER_ERROR,
+                error = ErrorResponse("Failed to send change rent status request. ${ex.message}")
             )
         }
     }

@@ -1,9 +1,11 @@
 package ru.bmstu.dvasev.rsoi.microservices.rental.api.v1
 
 import mu.KotlinLogging
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,6 +17,7 @@ import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentRq
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentsRq
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.GetUserRentsRs
 import ru.bmstu.dvasev.rsoi.microservices.rental.model.RentalModel
+import ru.bmstu.dvasev.rsoi.microservices.rental.model.RentalStatusChangeRq
 import ru.bmstu.dvasev.rsoi.microservices.rental.storage.RentalService
 import javax.validation.Valid
 
@@ -70,6 +73,25 @@ class RentalsController(
             response = foundRent.get()
         )
         log.debug { "Successfully found rent by username ${request.username} and uid ${request.rentalUid}. Response: $response" }
+        return response
+    }
+
+    @PatchMapping("status")
+    fun changeRentalStatus(@Valid @RequestBody rentalStatusChangeRq: RentalStatusChangeRq): ApiResponse<RentalModel> {
+        log.debug { "Received new change rent status request. $rentalStatusChangeRq" }
+        val updatedRental = rentalService.changeRentStatus(rentalStatusChangeRq)
+        if (updatedRental.isEmpty) {
+            log.warn { "Failed to find rental with uid ${rentalStatusChangeRq.rentalUid}" }
+            return ApiResponse(
+                httpCode = NOT_FOUND,
+                error = ErrorResponse("Rental with uid ${rentalStatusChangeRq.rentalUid} not found")
+            )
+        }
+        val response = ApiResponse(
+            httpCode = HttpStatus.NO_CONTENT,
+            response = updatedRental.get()
+        )
+        log.debug { "Successfully cancel rental. Response: $response" }
         return response
     }
 }

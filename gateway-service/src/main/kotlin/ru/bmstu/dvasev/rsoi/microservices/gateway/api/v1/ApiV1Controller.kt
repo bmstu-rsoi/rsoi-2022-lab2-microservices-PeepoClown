@@ -3,6 +3,7 @@ package ru.bmstu.dvasev.rsoi.microservices.gateway.api.v1
 import mu.KotlinLogging
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import ru.bmstu.dvasev.rsoi.microservices.cars.model.GetCarsRq
 import ru.bmstu.dvasev.rsoi.microservices.gateway.action.CarsGetAction
 import ru.bmstu.dvasev.rsoi.microservices.gateway.action.RentCarAction
+import ru.bmstu.dvasev.rsoi.microservices.gateway.action.RentEndAction
 import ru.bmstu.dvasev.rsoi.microservices.gateway.action.UserRentGetAction
 import ru.bmstu.dvasev.rsoi.microservices.gateway.model.CreateRentalRequest
 import ru.bmstu.dvasev.rsoi.microservices.gateway.model.CreateRentalRequestWithUser
@@ -26,7 +28,8 @@ import javax.validation.Valid
 class ApiV1Controller(
     private val carsGetAction: CarsGetAction,
     private val rentCarAction: RentCarAction,
-    private val userRentGetAction: UserRentGetAction
+    private val userRentGetAction: UserRentGetAction,
+    private val rentEndAction: RentEndAction
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -96,6 +99,34 @@ class ApiV1Controller(
         log.debug { "Received new get user $username rents request" }
         val response = userRentGetAction.getUserRents(username)
         log.debug { "Return get user $username rents response. $response" }
+        return response
+    }
+
+    @DeleteMapping(
+        path = ["rental/{rentalUid}"],
+        produces = [APPLICATION_JSON_VALUE]
+    )
+    fun cancelRent(
+        @RequestHeader("X-User-Name") username: String,
+        @PathVariable("rentalUid") rentalUid: String
+    ): ResponseEntity<*> {
+        log.debug { "Received new cancel rent request. $rentalUid" }
+        val response = rentEndAction.cancelRent(username = username, rentalUid = rentalUid)
+        log.debug { "Return cancel rent response. $response" }
+        return response
+    }
+
+    @PostMapping(
+        path = ["rental/{rentalUid}/finish"],
+        produces = [APPLICATION_JSON_VALUE]
+    )
+    fun finishRent(
+        @RequestHeader("X-User-Name") username: String,
+        @PathVariable("rentalUid") rentalUid: String
+    ): ResponseEntity<*> {
+        log.debug { "Received new finish rent request. $rentalUid" }
+        val response = rentEndAction.finishRent(username = username, rentalUid = rentalUid)
+        log.debug { "Return finish rent response. $response" }
         return response
     }
 }

@@ -90,6 +90,27 @@ class CarsServiceSender(
         }
     }
 
+    fun unreserveCar(carUid: String): ApiResponse<CarModel> {
+        val request = HttpEntity(null, buildHeaders())
+        log.debug { "Sending unreserve car request" }
+
+        return try {
+            val response = carsRestTemplate.patchForObject(
+                carsRestProperties.unreservePath + "/$carUid",
+                request,
+                WrappedReserveCarRs::class.java
+            )
+            log.info { "Successfully received response from unreserve car service" }
+            response!!
+        } catch (ex: Exception) {
+            log.warn(ex) { "Failed to unreserve car with uid $carUid" }
+            ApiResponse(
+                httpCode = INTERNAL_SERVER_ERROR,
+                error = ErrorResponse("Failed to unreserve car with uid $carUid")
+            )
+        }
+    }
+
     private fun buildHeaders(): HttpHeaders {
         val headers = HttpHeaders()
         headers.contentType = MediaType("application", "json", UTF_8)

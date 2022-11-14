@@ -29,4 +29,6 @@ data class RentalRestProperties(
     val getUserRent: String = "/user/find",
     @get:NotNull
     val getUserRents: String = "/user/get",
+    @get:NotNull
+    val changeRentStatusPath: String = "/status"
 ) : CommonRestTemplateProperties
